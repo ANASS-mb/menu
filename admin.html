@@ -32,17 +32,6 @@
                 <button onclick="fetchOrders()" class="bg-blue-600 hover:bg-blue-500 px-4 py-2 rounded-lg text-sm font-bold transition">🔄 تحديث الطلبات</button>
             </header>
 
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div class="glass-panel p-4 rounded-xl text-center">
-                    <h3 class="text-gray-400 text-sm">طلبات اليوم</h3>
-                    <p class="text-2xl font-bold text-white mt-1">12</p>
-                </div>
-                <div class="glass-panel p-4 rounded-xl text-center">
-                    <h3 class="text-gray-400 text-sm">المدخول اليومي</h3>
-                    <p class="text-2xl font-bold text-yellow-500 mt-1">450 DH</p>
-                </div>
-            </div>
-
             <div class="glass-panel rounded-xl overflow-x-auto">
                 <table class="w-full text-right">
                     <thead class="bg-white/5 border-b border-white/10 text-gray-300">
@@ -52,21 +41,11 @@
                             <th class="p-4">الأشخاص</th>
                             <th class="p-4">التفاصيل</th>
                             <th class="p-4">المجموع</th>
-                            <th class="p-4">الإجراء</th>
+                            <th class="p-4">الحالة</th>
                         </tr>
                     </thead>
                     <tbody id="orders-list" class="divide-y divide-white/5">
-                        <tr class="hover:bg-white/5 transition">
-                            <td class="p-4 text-sm text-gray-400">12:30 PM</td>
-                            <td class="p-4 font-bold text-yellow-500">طاولة 5</td>
-                            <td class="p-4">2</td>
-                            <td class="p-4 text-sm">بيتزا مارغريتا x1, كولا x2</td>
-                            <td class="p-4 font-bold">120 DH</td>
-                            <td class="p-4">
-                                <button class="bg-green-600/20 text-green-500 border border-green-600 px-3 py-1 rounded-md text-sm hover:bg-green-600 hover:text-white transition">تم التقديم</button>
-                            </td>
-                        </tr>
-                    </tbody>
+                        </tbody>
                 </table>
             </div>
         </section>
@@ -74,73 +53,66 @@
         <section id="menu-tab" class="hidden space-y-6">
             <header class="flex justify-between items-center">
                 <h2 class="text-2xl font-bold">إدارة قائمة الطعام</h2>
-                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vSIWHuGH6ncA4zp6A43RdxyxM3yibzV65Lpq4hdgc6NhVv4yjZfRpNfUFJMRbr6cP56Ds7oD9lye1B3/edit" target="_blank" class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg text-sm font-bold transition">📝 تعديل عبر Google Sheets</a>
+                <a href="https://docs.google.com/spreadsheets/d/e/2PACX-1vRWyq-6gg6THtqEJVZ2y0uiOrUexQ4a3vsSaCrUysydYwxiRPc4PVGYeQfAn075Z5Q8KI2ml2WQ-VtE/edit" target="_blank" class="bg-green-600 hover:bg-green-500 px-4 py-2 rounded-lg text-sm font-bold transition">📝 تعديل المنيو</a>
             </header>
             <div class="glass-panel p-8 rounded-xl text-center">
-                <p class="text-gray-300 mb-4">حالياً، يتم سحب المنتجات تلقائياً من ملف Google Sheets الخاص بك.</p>
-                <p class="text-sm text-gray-500">لإضافة منتج جديد، أو تعديل سعر، أو تغيير صورة، يرجى الضغط على الزر أعلاه لفتح الملف والتعديل عليه مباشرة. ستتحدث القائمة عند الزبائن فوراً.</p>
+                <p class="text-gray-300 mb-4">يتم سحب المنتجات تلقائياً من ملف Google Sheets.</p>
+                <p class="text-sm text-gray-500">لإضافة منتج جديد، أو تعديل سعر، يرجى الضغط على الزر أعلاه لتعديل الملف.</p>
             </div>
         </section>
 
     </main>
 
     <script>
-    // ضع رابط الـ Web App الخاص بك هنا (الذي حصلت عليه من خطوة النشر)
-    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5bA46yXpKKN7t6go8e3PaiGHntUfd5GIeQg2BheYbJ215TjJIAS_pdCMmqneH2JM-yw/exec';
+        // ✅ رابط السكربت الجديد الخاص بك
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5bA46yXpKKN7t6go8e3PaiGHntUfd5GIeQg2BheYbJ215TjJIAS_pdCMmqneH2JM-yw/exec';
 
-    function showTab(tabName) {
-        document.getElementById('orders-tab').classList.add('hidden');
-        document.getElementById('menu-tab').classList.add('hidden');
-        document.getElementById('btn-orders').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
-        document.getElementById('btn-menu').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
+        function showTab(tabName) {
+            document.getElementById('orders-tab').classList.add('hidden');
+            document.getElementById('menu-tab').classList.add('hidden');
+            document.getElementById('btn-orders').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
+            document.getElementById('btn-menu').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
 
-        document.getElementById(tabName + '-tab').classList.remove('hidden');
-        document.getElementById('btn-' + tabName).className = "text-right px-4 py-3 rounded-lg bg-yellow-500 text-black font-bold transition";
-        
-        if(tabName === 'orders') fetchOrders();
-    }
-
-    async function fetchOrders() {
-        const list = document.getElementById('orders-list');
-        list.innerHTML = '<tr><td colspan="6" class="p-10 text-center">جارِ جلب الطلبات... ⏳</td></tr>';
-
-        try {
-            const response = await fetch(APPS_SCRIPT_URL);
-            const orders = await response.json();
-
-            if (orders.length === 0) {
-                list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-gray-500">لا توجد طلبات حالياً.</td></tr>';
-                return;
-            }
-
-            list.innerHTML = orders.map(order => {
-                // تنسيق الوقت
-                const date = new Date(order.timestamp).toLocaleString('ar-EG', {hour: '2-digit', minute: '2-digit'});
-                
-                return `
-                <tr class="hover:bg-white/5 transition border-b border-white/5">
-                    <td class="p-4 text-sm text-gray-400">${date}</td>
-                    <td class="p-4 font-bold text-yellow-500">طاولة ${order.table}</td>
-                    <td class="p-4">${order.couvert}</td>
-                    <td class="p-4 text-sm">${order.items}</td>
-                    <td class="p-4 font-bold text-green-400">${order.total}</td>
-                    <td class="p-4">
-                        <span class="px-3 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30">
-                            ${order.status || 'معلق'}
-                        </span>
-                    </td>
-                </tr>
-                `;
-            }).join('');
-
-        } catch (error) {
-            console.error(error);
-            list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-red-500">حدث خطأ أثناء جلب البيانات. تأكد من إعدادات النشر (Anyone).</td></tr>';
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            document.getElementById('btn-' + tabName).className = "text-right px-4 py-3 rounded-lg bg-yellow-500 text-black font-bold transition";
+            
+            if(tabName === 'orders') fetchOrders();
         }
-    }
 
-    // جلب الطلبات عند فتح الصفحة تلقائياً
-    window.onload = fetchOrders;
-</script>
+        async function fetchOrders() {
+            const list = document.getElementById('orders-list');
+            list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-yellow-500">جارِ جلب الطلبات الحية... ⏳</td></tr>';
+
+            try {
+                const response = await fetch(APPS_SCRIPT_URL);
+                const orders = await response.json();
+
+                if (orders.length === 0) {
+                    list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-gray-500">لا توجد طلبات في الجدول حالياً.</td></tr>';
+                    return;
+                }
+
+                list.innerHTML = orders.map(order => {
+                    return `
+                    <tr class="hover:bg-white/5 transition">
+                        <td class="p-4 text-sm text-gray-400" dir="ltr">${order.timestamp}</td>
+                        <td class="p-4 font-bold text-yellow-500">طاولة ${order.table}</td>
+                        <td class="p-4">${order.couvert}</td>
+                        <td class="p-4 text-sm">${order.items}</td>
+                        <td class="p-4 font-bold text-green-400">${order.total}</td>
+                        <td class="p-4 text-sm">${order.status}</td>
+                    </tr>
+                    `;
+                }).join('');
+
+            } catch (error) {
+                console.error(error);
+                list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-red-500">حدث خطأ. يرجى التأكد من نشر Apps Script وإعطاء الصلاحية لـ Anyone.</td></tr>';
+            }
+        }
+
+        // جلب الطلبات بمجرد فتح الصفحة
+        window.onload = fetchOrders;
+    </script>
 </body>
 </html>
