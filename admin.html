@@ -85,26 +85,62 @@
     </main>
 
     <script>
-        // دالة التبديل بين التبويبات
-        function showTab(tabName) {
-            // إخفاء الكل
-            document.getElementById('orders-tab').classList.add('hidden');
-            document.getElementById('menu-tab').classList.add('hidden');
-            
-            // تصفير الأزرار
-            document.getElementById('btn-orders').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
-            document.getElementById('btn-menu').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
+    // ضع رابط الـ Web App الخاص بك هنا (الذي حصلت عليه من خطوة النشر)
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbz5bA46yXpKKN7t6go8e3PaiGHntUfd5GIeQg2BheYbJ215TjJIAS_pdCMmqneH2JM-yw/exec';
 
-            // إظهار المطلوب
-            document.getElementById(tabName + '-tab').classList.remove('hidden');
-            document.getElementById('btn-' + tabName).className = "text-right px-4 py-3 rounded-lg bg-yellow-500 text-black font-bold transition";
-        }
+    function showTab(tabName) {
+        document.getElementById('orders-tab').classList.add('hidden');
+        document.getElementById('menu-tab').classList.add('hidden');
+        document.getElementById('btn-orders').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
+        document.getElementById('btn-menu').className = "text-right px-4 py-3 rounded-lg hover:bg-white/10 text-gray-300 transition";
 
-        // دالة جلب الطلبات (تحتاج إلى إعداد في Google Apps Script)
-        function fetchOrders() {
-            alert('يجب ربط هذه الواجهة بكود Google Apps Script لجلب الطلبات الحية من الجدول.');
-            // هنا سيتم وضع كود fetch() لجلب البيانات
+        document.getElementById(tabName + '-tab').classList.remove('hidden');
+        document.getElementById('btn-' + tabName).className = "text-right px-4 py-3 rounded-lg bg-yellow-500 text-black font-bold transition";
+        
+        if(tabName === 'orders') fetchOrders();
+    }
+
+    async function fetchOrders() {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = '<tr><td colspan="6" class="p-10 text-center">جارِ جلب الطلبات... ⏳</td></tr>';
+
+        try {
+            const response = await fetch(APPS_SCRIPT_URL);
+            const orders = await response.json();
+
+            if (orders.length === 0) {
+                list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-gray-500">لا توجد طلبات حالياً.</td></tr>';
+                return;
+            }
+
+            list.innerHTML = orders.map(order => {
+                // تنسيق الوقت
+                const date = new Date(order.timestamp).toLocaleString('ar-EG', {hour: '2-digit', minute: '2-digit'});
+                
+                return `
+                <tr class="hover:bg-white/5 transition border-b border-white/5">
+                    <td class="p-4 text-sm text-gray-400">${date}</td>
+                    <td class="p-4 font-bold text-yellow-500">طاولة ${order.table}</td>
+                    <td class="p-4">${order.couvert}</td>
+                    <td class="p-4 text-sm">${order.items}</td>
+                    <td class="p-4 font-bold text-green-400">${order.total}</td>
+                    <td class="p-4">
+                        <span class="px-3 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400 border border-blue-500/30">
+                            ${order.status || 'معلق'}
+                        </span>
+                    </td>
+                </tr>
+                `;
+            }).join('');
+
+        } catch (error) {
+            console.error(error);
+            list.innerHTML = '<tr><td colspan="6" class="p-10 text-center text-red-500">حدث خطأ أثناء جلب البيانات. تأكد من إعدادات النشر (Anyone).</td></tr>';
         }
-    </script>
+    }
+
+    // جلب الطلبات عند فتح الصفحة تلقائياً
+    window.onload = fetchOrders;
+</script>
 </body>
 </html>
